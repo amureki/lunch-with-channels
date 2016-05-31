@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load i18n places_tags %}
+
+{% block content %}
+  <div class="row">
+    {% for place in object_list %}
+      <div class="col-sm-6 col-md-4" data-item="place" data-id="{{ place.id }}">
+        <div class="thumbnail" style="min-height: 500px;">
+          {% with default_image="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" %}
+            <img class="img-rounded"
+                 src="{{ place.image.s.url|default:default_image }}"
+                 alt="{{ place }}" width="140" height="140"/>
+          {% endwith %}
+          <div class="caption">
+            <h3>{{ place.name }}
+              <small>votes: <span data-item="today-rating">{{ place.today_rating }}</span></small>
+            </h3>
+            <p>{{ place.address }}</p>
+            <p>
+              (<span data-item="voters">{{ place.voters|join:", " }}</span>)
+            </p>
+            <p>
+              <button class="btn {{ place|voted_by:request.username|yesno:"btn-default,btn-primary" }}"
+                      data-action="vote"
+                      data-state="{{ place|voted_by:request.username|yesno:"Unvote,Vote" }}">
+                {{ place|voted_by:request.username|yesno:"Unvote,Vote" }}
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock content %}
+
+
+{% block extrafooter %}
+  <script>
+    $(function() {
+      var ws_scheme = window.location.protocol == 'https:' ? 'wss' : 'ws';
+      var ws_path = ws_scheme + '://' + window.location.host + '/votes/stream/';
+      var socket = new ReconnectingWebSocket(ws_path);
+      // Handle incoming messages
+      socket.onmessage = function(message) {
+        // Decode the JSON
+        var data = JSON.parse(message.data);
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+        var placeDiv = $('div[data-id=' + data.place_id + ']');
+
+        placeDiv.find('[data-item="today-rating"]').html(data.total);
+        placeDiv.find('[data-item="voters"]').html(data.users.join(', '));
+      };
+
+      // handle voting
+      $('[data-action="vote"]').on('click', function() {
+        socket.send(JSON.stringify({
+          'command': 'update',
+          'place_id': $(this).closest('div[data-item="place"]').data('id'),
+          'username': '{{ request.username }}'
+        }));
+        $(this).attr('data-state', $(this).attr('data-state') == 'Vote' ? 'Unvote' : 'Vote');
+        $(this).html($(this).attr('data-state'));
+        $(this).toggleClass('btn-default btn-primary');
+
+        return false;
+      });
+    });
+  </script>
+{% endblock extrafooter %}

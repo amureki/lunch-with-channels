@@ -1,0 +1,7 @@
+-r requirements.in
+
+coverage
+model-mommy
+pytest
+pytest-django
+pytest-cov

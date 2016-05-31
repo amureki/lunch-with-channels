@@ -1,0 +1,12 @@
+asgi_redis
+channels
+Django
+django-configurations
+dj-database-url
+django-extensions
+django-model-utils
+django-stdimage
+psycopg2
+raven
+uWSGI
+whitenoise

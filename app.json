@@ -1,0 +1,26 @@
+{
+    "name": "Lunchtime",
+    "description": "Play around with django channels",
+    "repository": "https://github.com/amureki/lunch-with-channels",
+    "keywords": ["django", "channels", "websockets"],
+    "scripts": {
+        "postdeploy": "python manage.py migrate"
+    },
+    "env": {
+        "SECRET_KEY": {
+            "description": "Django's SECRET_KEY setting",
+            "generator": "secret"
+        }
+    },
+    "addons": ["heroku-postgresql", "heroku-redis"],
+    "formation": {
+        "web": {
+            "quantity": 1,
+          " size": "Free"
+        },
+        "worker": {
+            "quantity": 1,
+            "size": "Free"
+        }
+    }
+}
