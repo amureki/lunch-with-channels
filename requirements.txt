@@ -7,7 +7,6 @@ channels==0.14.0
 contextlib2==0.5.3
 daphne==0.12.1
 dj-database-url==0.4.1
-django-configurations==1.0
 django-extensions==1.6.7
 django-model-utils==2.5
 django-stdimage==2.3.3

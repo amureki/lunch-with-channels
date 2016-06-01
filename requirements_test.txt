@@ -8,7 +8,6 @@ contextlib2==0.5.3
 coverage==4.1
 daphne==0.12.1
 dj-database-url==0.4.1
-django-configurations==1.0
 django-extensions==1.6.7
 django-model-utils==2.5
 django-stdimage==2.3.3
@@ -21,7 +20,7 @@ psycopg2==2.6.1
 py==1.4.31
 pytest-cov==2.2.1
 pytest-django==2.9.1
-pytest==2.9.1
+pytest==2.9.2
 raven==5.19.0
 redis==2.10.5
 six==1.10.0
