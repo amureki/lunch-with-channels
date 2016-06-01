@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+
+## Must should happen at the very end
+
+echo "Applying database migrations"
+PGOPTIONS= python manage.py migrate --noinput -v0

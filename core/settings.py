@@ -5,8 +5,8 @@ import dj_database_url
 from django.core.urlresolvers import reverse_lazy
 
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-BASE_DIR = os.path.abspath(os.path.join(PROJECT_DIR, os.pardir))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'secret')
 
@@ -41,6 +41,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'core.middleware.UsernameMiddleware',
 ]
 
@@ -63,6 +64,7 @@ TEMPLATES = [
                 'django.template.context_processors.csrf',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'debug': DEBUG,
             'loaders': [
                 ('core.loaders.ProductionCachedLoader', [
                     'django.template.loaders.filesystem.Loader',
@@ -95,13 +97,20 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Europe/Berlin'
+TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, '_static')
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
 MEDIA_URL = os.environ.get('MEDIA_URL', 'http://127.0.0.1:8000/media/')
 
 LOGGING = {
@@ -116,12 +125,7 @@ LOGGING = {
         'django': {
             'handlers': ['console'],
             'propagate': True,
-            'level': 'INFO'
-        },
-        'chat': {
-            'handlers': ['console'],
-            'propagate': False,
-            'level': 'DEBUG',
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'ERROR')
         },
     },
 }
@@ -150,7 +154,3 @@ CHANNEL_LAYERS = {
 if DEBUG:
     MEDIA_PATH = urlparse(MEDIA_URL).path
     MEDIA_ROOT = os.path.join(BASE_DIR, '_media')
-else:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT = True

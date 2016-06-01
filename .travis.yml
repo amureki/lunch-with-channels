@@ -13,10 +13,9 @@ addons:
 services:
 - redis-server
 install:
-  pip install --upgrade pip==8.1.1
-  pip install -qr requirements_test.txt
-  pip-sync requirements_test.txt
+-  pip install --upgrade pip==8.1.1
+-  pip install -qr requirements_test.txt
 before_script:
 - psql -c 'create database lunchtime;' -U postgres
 script:
-- py.test --maxfail=1 -n2 --durations=10 --cov-config setup.cfg --cov-report= --cov=.
+- py.test --maxfail=1 --durations=10 --cov-config setup.cfg --cov-report= --cov=.
