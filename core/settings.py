@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'channels',
+    'django_extensions',
     'stdimage',
 
     'core',
@@ -102,13 +103,14 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(PROJECT_ROOT, 'static'),
+)
+STATICFILES_STORAGE = os.environ.get(
+    'STATICFILES_STORAGE', 'django.contrib.staticfiles.storage.StaticFilesStorage'
 )
 
 MEDIA_URL = os.environ.get('MEDIA_URL', 'http://127.0.0.1:8000/media/')

@@ -2,7 +2,6 @@ import json
 
 from channels import Group
 from django.db import models
-from django.db.models import QuerySet
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
@@ -11,7 +10,7 @@ from django_extensions.db.models import TimeStampedModel
 from places.models import Place
 
 
-class VoteQuerySet(QuerySet):
+class VoteQuerySet(models.QuerySet):
     def by_username_for_place_today(self, username, place_id):
         now = timezone.now()
         return self.filter(username=username, place_id=place_id,
@@ -60,6 +59,7 @@ class Vote(TimeStampedModel):
             'place_id': place_id,
             'total': total,
             'users': place.voters,
+            'most_wanted': Place.most_wanted()
         }
         Group('votes').send({
             'text': json.dumps(notification),

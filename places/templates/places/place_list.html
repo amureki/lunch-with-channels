@@ -2,20 +2,22 @@
 {% load i18n places_tags %}
 
 {% block content %}
+  <div class="row center-block">
+  <p class="lead text-center">Most Wanted: <b><span data-item="most-wanted">{{ most_wanted|default:"Nothing" }}</span></b></p>
+  </div>
   <div class="row">
     {% for place in object_list %}
       <div class="col-sm-6 col-md-4" data-item="place" data-id="{{ place.id }}">
-        <div class="thumbnail" style="min-height: 500px;">
-          {% with default_image="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" %}
-            <img class="img-rounded"
-                 src="{{ place.image.s.url|default:default_image }}"
-                 alt="{{ place }}" width="140" height="140"/>
-          {% endwith %}
+        <div class="thumbnail" style="min-height: 290px;">
           <div class="caption">
             <h3>{{ place.name }}
-              <small>votes: <span data-item="today-rating">{{ place.today_rating }}</span></small>
+              <small>votes: <span data-item="today-rating"><b>{{ place.today_rating }}</b></span></small>
             </h3>
-            <p>{{ place.address }}</p>
+            <p>
+              <a href="https://www.google.com/maps/place/{{ place.address }}" target="_blank" rel="noopener noreferrer">
+                {{ place.address }}
+              </a>
+            </p>
             <p>
               (<span data-item="voters">{{ place.voters|join:", " }}</span>)
             </p>
@@ -48,10 +50,11 @@
           alert(data.error);
           return;
         }
-        var placeDiv = $('div[data-id=' + data.place_id + ']');
+        var $placeDiv = $('div[data-id=' + data.place_id + ']');
 
-        placeDiv.find('[data-item="today-rating"]').html(data.total);
-        placeDiv.find('[data-item="voters"]').html(data.users.join(', '));
+        $placeDiv.find('[data-item="today-rating"]').html(data.total);
+        $placeDiv.find('[data-item="voters"]').html(data.users.join(', '));
+        $('span[data-item="most-wanted"]').html(data.most_wanted);
       };
 
       // handle voting

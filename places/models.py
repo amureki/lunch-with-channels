@@ -33,11 +33,32 @@ class Place(TimeStampedModel):
     @property
     def voters(self):
         now = timezone.now()
-        voters = self.vote_set.filter(created__date__gte=now).values_list(
-            'username', flat=True)
+        voters = self.vote_set \
+            .filter(created__date__gte=now) \
+            .values_list('username', flat=True)
         return sorted(list(voters)) or ['Nobody']
 
     def voted_by(self, username):
         now = timezone.now()
         return self.vote_set.filter(created__date__gte=now,
                                     username=username).exists()
+
+    @classmethod
+    def most_wanted(cls):
+        now = timezone.now()
+        wanted = cls.objects \
+            .filter(vote__created__date__gte=now) \
+            .distinct() \
+            .annotate(models.Count('vote')) \
+            .filter(vote__count__gt=0) \
+            .order_by('-vote__count')
+
+        if wanted.first():
+            top_score = wanted.first().vote__count
+            most_wanted = wanted \
+                .filter(vote__count=top_score) \
+                .values_list('name', flat=True)
+        else:
+            most_wanted = ['Nothing', ]
+
+        return ', '.join(most_wanted)
