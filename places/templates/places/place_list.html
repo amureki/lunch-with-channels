@@ -8,25 +8,20 @@
   <div class="row">
     {% for place in object_list %}
       <div class="col-sm-6 col-md-4" data-item="place" data-id="{{ place.id }}">
-        <div class="thumbnail" style="min-height: 290px;">
+        <div class="thumbnail" style="min-height: 180px;">
           <div class="caption">
-            <h3>{{ place.name }}
-              <small>votes: <span data-item="today-rating"><b>{{ place.today_rating }}</b></span></small>
-            </h3>
-            <p>
-              <a href="https://www.google.com/maps/place/{{ place.address }}" target="_blank" rel="noopener noreferrer">
-                {{ place.address }}
-              </a>
-            </p>
-            <p>
+              <h4>
+                  <a href="https://www.google.com/maps/place/{{ place.address }}" target="_blank"
+                     rel="noopener noreferrer">{{ place.name }}</a>
+                  <small>votes: <span data-item="today-rating"><b>{{ place.today_rating }}</b></span></small>
+                  <button class="btn btn-sm pull-right {{ place|voted_by:request.username|yesno:"btn-default,btn-primary" }}"
+                          data-action="vote"
+                          data-state="{{ place|voted_by:request.username|yesno:"Unvote,Vote" }}">
+                      {{ place|voted_by:request.username|yesno:"Unvote,Vote" }}
+                  </button>
+              </h4>
+            <p class="text-muted small">
               (<span data-item="voters">{{ place.voters|join:", " }}</span>)
-            </p>
-            <p>
-              <button class="btn {{ place|voted_by:request.username|yesno:"btn-default,btn-primary" }}"
-                      data-action="vote"
-                      data-state="{{ place|voted_by:request.username|yesno:"Unvote,Vote" }}">
-                {{ place|voted_by:request.username|yesno:"Unvote,Vote" }}
-              </button>
             </p>
           </div>
         </div>
